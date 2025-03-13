@@ -14,19 +14,20 @@ class RentalController extends Controller
      */
     public function index()
     {
-        $rentals = auth()->user()->isAdmin() 
-            ? Rental::with(['user', 'car'])->latest()->get()
-            : auth()->user()->rentals()->with('car')->latest()->get();
-        
+        $rentals = auth()->user()->rentals()->latest()->paginate(10);
         return view('rentals.index', compact('rentals'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(Car $car = null)
     {
-        $car = Car::findOrFail($request->car);
+        if (!$car) {
+            return redirect()->route('cars.index')
+                ->with('error', 'Please select a car first');
+        }
+        
         return view('rentals.create', compact('car'));
     }
 
@@ -37,7 +38,7 @@ class RentalController extends Controller
     {
         $validated = $request->validate([
             'car_id' => 'required|exists:cars,id',
-            'start_date' => 'required|date|after:today',
+            'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
             'pickup_location' => 'required|string|max:255',
             'dropoff_location' => 'required|string|max:255',
@@ -50,7 +51,7 @@ class RentalController extends Controller
         $days = $startDate->diffInDays($endDate) + 1;
         $totalPrice = $car->price_per_day * $days;
 
-        $rental = Rental::create([
+        $rental = auth()->user()->rentals()->create([
             'user_id' => auth()->id(),
             'car_id' => $validated['car_id'],
             'start_date' => $validated['start_date'],
@@ -64,7 +65,7 @@ class RentalController extends Controller
         $car->update(['status' => 'rented']);
 
         return redirect()->route('rentals.show', $rental)
-            ->with('success', 'Rental created successfully.');
+            ->with('success', 'Rental created successfully!');
     }
 
     /**

@@ -1,158 +1,137 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-blue-800 leading-tight">
-            {{ __('Add New Car') }}
-        </h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h4 mb-0 text-gray-800">
+                {{ __('Add New Car') }}
+            </h2>
+            <a href="{{ route('cars.index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Cars
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form action="{{ route('cars.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                        @csrf
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Brand -->
-                            <div>
-                                <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
-                                <input type="text" name="brand" id="brand" value="{{ old('brand') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('brand')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Model -->
-                            <div>
-                                <label for="model" class="block text-sm font-medium text-gray-700">Model</label>
-                                <input type="text" name="model" id="model" value="{{ old('model') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('model')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Year -->
-                            <div>
-                                <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
-                                <input type="number" name="year" id="year" value="{{ old('year') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('year')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Color -->
-                            <div>
-                                <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
-                                <input type="text" name="color" id="color" value="{{ old('color') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('color')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Price per Day -->
-                            <div>
-                                <label for="price_per_day" class="block text-sm font-medium text-gray-700">Price per Day</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">$</span>
-                                    </div>
-                                    <input type="number" name="price_per_day" id="price_per_day" value="{{ old('price_per_day') }}" required
-                                        class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+    <div class="py-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form action="{{ route('cars.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                
+                                <div class="mb-3">
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <input type="text" class="form-control @error('brand') is-invalid @enderror" 
+                                        id="brand" name="brand" value="{{ old('brand') }}" required>
+                                    @error('brand')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('price_per_day')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
 
-                            <!-- Transmission -->
-                            <div>
-                                <label for="transmission" class="block text-sm font-medium text-gray-700">Transmission</label>
-                                <select name="transmission" id="transmission" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="">Select transmission</option>
-                                    <option value="automatic" {{ old('transmission') == 'automatic' ? 'selected' : '' }}>Automatic</option>
-                                    <option value="manual" {{ old('transmission') == 'manual' ? 'selected' : '' }}>Manual</option>
-                                </select>
-                                @error('transmission')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="model" class="form-label">Model</label>
+                                    <input type="text" class="form-control @error('model') is-invalid @enderror" 
+                                        id="model" name="model" value="{{ old('model') }}" required>
+                                    @error('model')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Fuel Type -->
-                            <div>
-                                <label for="fuel_type" class="block text-sm font-medium text-gray-700">Fuel Type</label>
-                                <select name="fuel_type" id="fuel_type" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="">Select fuel type</option>
-                                    <option value="petrol" {{ old('fuel_type') == 'petrol' ? 'selected' : '' }}>Petrol</option>
-                                    <option value="diesel" {{ old('fuel_type') == 'diesel' ? 'selected' : '' }}>Diesel</option>
-                                    <option value="electric" {{ old('fuel_type') == 'electric' ? 'selected' : '' }}>Electric</option>
-                                    <option value="hybrid" {{ old('fuel_type') == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
-                                </select>
-                                @error('fuel_type')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="year" class="form-label">Year</label>
+                                    <input type="number" class="form-control @error('year') is-invalid @enderror" 
+                                        id="year" name="year" value="{{ old('year') }}" required>
+                                    @error('year')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Seats -->
-                            <div>
-                                <label for="seats" class="block text-sm font-medium text-gray-700">Number of Seats</label>
-                                <input type="number" name="seats" id="seats" value="{{ old('seats') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('seats')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select class="form-select @error('category') is-invalid @enderror" 
+                                        id="category" name="category" required>
+                                        <option value="">Select Category</option>
+                                        <option value="sedan" {{ old('category') === 'sedan' ? 'selected' : '' }}>Sedan</option>
+                                        <option value="suv" {{ old('category') === 'suv' ? 'selected' : '' }}>SUV</option>
+                                        <option value="luxury" {{ old('category') === 'luxury' ? 'selected' : '' }}>Luxury</option>
+                                        <option value="sports" {{ old('category') === 'sports' ? 'selected' : '' }}>Sports</option>
+                                    </select>
+                                    @error('category')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Luggage -->
-                            <div>
-                                <label for="luggage" class="block text-sm font-medium text-gray-700">Luggage Capacity (bags)</label>
-                                <input type="number" name="luggage" id="luggage" value="{{ old('luggage') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                @error('luggage')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="transmission" class="form-label">Transmission</label>
+                                    <select class="form-select @error('transmission') is-invalid @enderror" 
+                                        id="transmission" name="transmission" required>
+                                        <option value="">Select Transmission</option>
+                                        <option value="automatic" {{ old('transmission') === 'automatic' ? 'selected' : '' }}>Automatic</option>
+                                        <option value="manual" {{ old('transmission') === 'manual' ? 'selected' : '' }}>Manual</option>
+                                    </select>
+                                    @error('transmission')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Image -->
-                            <div class="md:col-span-2">
-                                <label for="image" class="block text-sm font-medium text-gray-700">Car Image</label>
-                                <input type="file" name="image" id="image" accept="image/*"
-                                    class="mt-1 block w-full text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-md file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-blue-50 file:text-blue-700
-                                    hover:file:bg-blue-100">
-                                @error('image')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="fuel_type" class="form-label">Fuel Type</label>
+                                    <select class="form-select @error('fuel_type') is-invalid @enderror" 
+                                        id="fuel_type" name="fuel_type" required>
+                                        <option value="">Select Fuel Type</option>
+                                        <option value="petrol" {{ old('fuel_type') === 'petrol' ? 'selected' : '' }}>Petrol</option>
+                                        <option value="diesel" {{ old('fuel_type') === 'diesel' ? 'selected' : '' }}>Diesel</option>
+                                        <option value="electric" {{ old('fuel_type') === 'electric' ? 'selected' : '' }}>Electric</option>
+                                    </select>
+                                    @error('fuel_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Description -->
-                            <div class="md:col-span-2">
-                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea name="description" id="description" rows="4" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                <div class="mb-3">
+                                    <label for="seats" class="form-label">Number of Seats</label>
+                                    <input type="number" class="form-control @error('seats') is-invalid @enderror" 
+                                        id="seats" name="seats" value="{{ old('seats') }}" required>
+                                    @error('seats')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="luggage_capacity" class="form-label">Luggage Capacity (bags)</label>
+                                    <input type="number" class="form-control @error('luggage_capacity') is-invalid @enderror" 
+                                        id="luggage_capacity" name="luggage_capacity" value="{{ old('luggage_capacity') }}" required>
+                                    @error('luggage_capacity')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="price_per_day" class="form-label">Price per Day ($)</label>
+                                    <input type="number" step="0.01" class="form-control @error('price_per_day') is-invalid @enderror" 
+                                        id="price_per_day" name="price_per_day" value="{{ old('price_per_day') }}" required>
+                                    @error('price_per_day')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Car Image</label>
+                                    <input type="file" class="form-control @error('image') is-invalid @enderror" 
+                                        id="image" name="image" accept="image/*">
+                                    @error('image')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-plus-circle me-2"></i>Add Car
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-
-                        <div class="flex justify-end space-x-4">
-                            <a href="{{ route('cars.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Cancel
-                            </a>
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Add Car
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

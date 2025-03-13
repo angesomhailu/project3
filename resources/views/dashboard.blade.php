@@ -229,13 +229,17 @@
                         <div class="card-body">
                             <h5 class="card-title mb-4">Quick Actions</h5>
                             <div class="d-grid gap-2">
-                                
-                                <a href="{{ route('rentals.create') }}" class="btn btn-outline-primary">
-                                    <i class="bi bi-plus-circle me-2"></i>New Rental
+                                <a href="{{ route('cars.index') }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-car-front me-2"></i>Rent a Car
                                 </a>
                                 <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary">
                                     <i class="bi bi-person me-2"></i>Update Profile
                                 </a>
+                                @if(auth()->user()->isAdmin())
+                                <a href="{{ route('cars.create') }}" class="btn btn-outline-success">
+                                    <i class="bi bi-plus-circle me-2"></i>Add New Car
+                                </a>
+                                @endif
                             </div>
                         </div>
                     </div>

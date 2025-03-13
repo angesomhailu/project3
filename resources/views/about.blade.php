@@ -1,11 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 class="h4 mb-0 text-gray-800">
-                {{ __('About Us') }}
-            </h2>
-        </div>
-    </x-slot>
 
     <div class="py-4" style="background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%); min-height: calc(100vh - 64px);">
         <div class="container">

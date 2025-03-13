@@ -34,7 +34,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('cars', CarController::class);
 
     // Rental Management Routes
-    Route::resource('rentals', RentalController::class);
+    Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
+    Route::get('/rentals/create/{car?}', [RentalController::class, 'create'])->name('rentals.create');
+    Route::post('/rentals', [RentalController::class, 'store'])->name('rentals.store');
+    Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show');
+
+    Route::post('/profile/update-photo', [ProfileController::class, 'updatePhoto'])
+        ->name('profile.update-photo');
+
+    Route::post('/profile/update-billing', [ProfileController::class, 'updateBilling'])
+        ->name('profile.update-billing');
 });
 
 require __DIR__.'/auth.php';
