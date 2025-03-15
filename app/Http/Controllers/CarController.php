@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class CarController extends Controller
 {
@@ -77,27 +79,51 @@ class CarController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'brand' => 'required|string|max:255',
+            'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
             'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'color' => 'required|string|max:255',
-            'price_per_day' => 'required|numeric|min:0',
+            'license_plate' => 'required|string|unique:cars,license_plate',
+            'daily_rate' => 'required|numeric|min:0',
             'description' => 'required|string',
-            'image' => 'nullable|image|max:2048',
-            'transmission' => 'required|string',
+            'mileage' => 'required|numeric|min:0',
+            'transmission' => 'required|in:automatic,manual',
             'fuel_type' => 'required|string',
             'seats' => 'required|integer|min:1',
-            'luggage' => 'required|integer|min:0',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'features' => 'array',
+            'status' => 'required|in:available,maintenance,rented',
         ]);
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('cars', 'public');
+        // Handle image uploads
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('cars', 'public');
+                $imagePaths[] = $path;
+            }
         }
 
-        Car::create($validated);
+        // Create the car
+        $car = Car::create([
+            'make' => $validated['make'],
+            'model' => $validated['model'],
+            'year' => $validated['year'],
+            'color' => $validated['color'],
+            'license_plate' => $validated['license_plate'],
+            'daily_rate' => $validated['daily_rate'],
+            'description' => $validated['description'],
+            'mileage' => $validated['mileage'],
+            'transmission' => $validated['transmission'],
+            'fuel_type' => $validated['fuel_type'],
+            'seats' => $validated['seats'],
+            'images' => $imagePaths,
+            'features' => $request->features ?? [],
+            'status' => $validated['status'],
+        ]);
 
         return redirect()->route('cars.index')
-            ->with('success', 'Car added successfully.');
+            ->with('success', 'Car created successfully');
     }
 
     /**

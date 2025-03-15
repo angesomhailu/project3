@@ -14,7 +14,7 @@ class Rental extends Model
         'car_id',
         'start_date',
         'end_date',
-        'total_price',
+        'total_cost',
         'status', // pending, active, completed, cancelled
         'pickup_location',
         'dropoff_location',
@@ -24,7 +24,7 @@ class Rental extends Model
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'total_price' => 'decimal:2',
+        'total_cost' => 'decimal:2',
     ];
 
     public function user()

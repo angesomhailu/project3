@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Rental;
 use App\Models\PaymentMethod;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -31,12 +32,34 @@ class ProfileController extends Controller
         // Get payment methods for the authenticated user
         $paymentMethods = Auth::user()->paymentMethods ?? collect([]);
 
+        // Add transactions - adjust the query based on your transaction model
+        $transactions = Auth::user()->transactions ?? collect([]);
+        // Or if you have a Transaction model:
+        // $transactions = Transaction::where('user_id', Auth::id())->get();
+
+        // Add reviews - adjust based on your Review model
+        $reviews = Auth::user()->reviews ?? collect([]);
+        // Or if you have a Review model:
+        // $reviews = Review::where('user_id', Auth::id())->get();
+
+        // Calculate user rating (average of all reviews)
+        $userRating = $reviews->avg('rating') ?? 0;
+
+        // Add login history - adjust based on your LoginHistory model
+        $loginHistory = Auth::user()->loginHistory ?? collect([]);
+        // Or if you have a LoginHistory model:
+        // $loginHistory = LoginHistory::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+
         return view('profile.edit', [
             'user' => Auth::user(),
             'activeRentals' => $activeRentals,
             'completedRentals' => $completedRentals,
             'canceledBookings' => $canceledBookings,
             'paymentMethods' => $paymentMethods,
+            'transactions' => $transactions,
+            'reviews' => $reviews,
+            'userRating' => $userRating,
+            'loginHistory' => $loginHistory,
         ]);
     }
 
@@ -110,5 +133,35 @@ class ProfileController extends Controller
         // This will depend on your payment provider (Stripe, PayPal, etc.)
 
         return back()->with('success', 'Billing information updated successfully');
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
+    }
+
+    public function addPaymentMethod(Request $request)
+    {
+        $request->validate([
+            'payment_type' => 'required|string',
+            'card_number' => 'required_if:payment_type,card',
+            'expiry_date' => 'required_if:payment_type,card',
+            'cvv' => 'required_if:payment_type,card',
+            // Add other validation rules as needed
+        ]);
+
+        // Add your payment method logic here
+        // This will depend on your payment provider (Stripe, PayPal, etc.)
+
+        return back()->with('success', 'Payment method added successfully');
     }
 }

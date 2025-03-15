@@ -9,6 +9,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AdminController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -44,6 +46,33 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/update-billing', [ProfileController::class, 'updateBilling'])
         ->name('profile.update-billing');
+
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.update-password')
+        ->middleware('auth');
+
+    Route::post('/profile/payment-method', [ProfileController::class, 'addPaymentMethod'])
+        ->name('profile.add-payment-method')
+        ->middleware('auth');
+
+    Route::get('/cars/create', [CarController::class, 'create'])
+        ->name('cars.create')
+        ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class]);
+
+    Route::post('/cars', [CarController::class, 'store'])
+        ->name('cars.store')
+        ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class]);
+});
+
+// Admin routes
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/users/{user}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.make-admin');
+    Route::post('/users/{user}/remove-admin', [AdminController::class, 'removeAdmin'])->name('admin.remove-admin');
+    Route::get('/cars', [AdminController::class, 'cars'])->name('admin.cars');
+    Route::get('/rentals', [AdminController::class, 'rentals'])->name('admin.rentals');
+    Route::get('/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
 });
 
 require __DIR__.'/auth.php';

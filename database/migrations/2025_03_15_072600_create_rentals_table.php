@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('rentals', function (Blueprint $table) {
             $table->id();
@@ -17,19 +14,14 @@ return new class extends Migration
             $table->foreignId('car_id')->constrained()->onDelete('cascade');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'active', 'completed', 'cancelled'])->default('pending');
-            $table->string('pickup_location');
-            $table->string('dropoff_location');
+            $table->decimal('total_cost', 10, 2);
+            $table->enum('status', ['pending', 'active', 'completed', 'canceled'])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('rentals');
     }

@@ -10,29 +10,51 @@ class Car extends Model
     use HasFactory;
 
     protected $fillable = [
-        'brand',
+        'make',
         'model',
         'year',
         'color',
-        'price_per_day',
+        'license_plate',
+        'daily_rate',
         'description',
-        'image',
-        'status', // available, rented, maintenance
+        'mileage',
         'transmission',
         'fuel_type',
         'seats',
-        'luggage',
+        'images',
+        'features',
+        'status',
     ];
 
     protected $casts = [
-        'price_per_day' => 'decimal:2',
-        'year' => 'integer',
-        'seats' => 'integer',
-        'luggage' => 'integer',
+        'images' => 'array',
+        'features' => 'array',
+        'daily_rate' => 'decimal:2',
+        'mileage' => 'decimal:1',
     ];
+
+    public function isAvailable()
+    {
+        return $this->status === 'available';
+    }
 
     public function rentals()
     {
         return $this->hasMany(Rental::class);
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', 'available');
+    }
+
+    public function scopeMaintenance($query)
+    {
+        return $query->where('status', 'maintenance');
+    }
+
+    public function scopeRented($query)
+    {
+        return $query->where('status', 'rented');
     }
 }

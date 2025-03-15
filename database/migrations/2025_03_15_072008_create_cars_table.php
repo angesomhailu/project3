@@ -6,28 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    public function up()
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->string('brand');
+            $table->string('make');
             $table->string('model');
             $table->integer('year');
             $table->string('color');
-            $table->decimal('price_per_day', 10, 2);
+            $table->string('license_plate')->unique();
+            $table->decimal('daily_rate', 10, 2);
             $table->text('description');
-            $table->string('image')->nullable();
-            $table->enum('status', ['available', 'rented', 'maintenance'])->default('available');
+            $table->decimal('mileage', 10, 1);
             $table->string('transmission');
             $table->string('fuel_type');
             $table->integer('seats');
-            $table->integer('luggage');
+            $table->json('images')->nullable();
+            $table->json('features')->nullable();
+            $table->enum('status', ['available', 'maintenance', 'rented'])->default('available');
             $table->timestamps();
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('cars');
     }
-}; 
+};
